@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>时钟学习应用</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 标题区域 -->
+        <header class="header">
+            <h1>时钟学习练习</h1>
+        </header>
+
+        <!-- 配置面板 -->
+        <section class="config-panel">
+            <h2>配置选项</h2>
+            <div class="time-units">
+                <label>
+                    <input type="checkbox" id="enable-hours" checked>
+                    时
+                </label>
+                <label>
+                    <input type="checkbox" id="enable-minutes">
+                    分
+                </label>
+                <label>
+                    <input type="checkbox" id="enable-seconds">
+                    秒
+                </label>
+            </div>
+            
+            <div class="minute-intervals" id="minute-intervals" style="display: none;">
+                <h3>分钟间隔:</h3>
+                <label>
+                    <input type="radio" name="minute-interval" value="30">
+                    30分钟
+                </label>
+                <label>
+                    <input type="radio" name="minute-interval" value="5">
+                    5分钟
+                </label>
+                <label>
+                    <input type="radio" name="minute-interval" value="1" checked>
+                    1分钟
+                </label>
+            </div>
+            
+            <button id="refresh-btn" class="refresh-btn">刷新题目</button>
+        </section>
+
+        <!-- 时钟显示区域 -->
+        <section class="clock-section">
+            <h2>请看时钟，输入时间</h2>
+            <div class="clock-container">
+                <canvas id="clock-canvas" width="300" height="300"></canvas>
+                <div id="clock-fallback" class="clock-fallback" style="display: none;">
+                    <div class="digital-time" id="digital-time">12:00:00</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 答案区域 -->
+        <section class="answer-section">
+            <!-- 输入区域 -->
+            <div class="input-section">
+                <div class="input-container">
+                    <label>请输入时间:</label>
+                    <div class="time-input-group">
+                        <div class="time-input-field">
+                            <input type="number" id="hours-input" min="0" max="12" value="0" placeholder="00">
+                            <label>时</label>
+                        </div>
+                        <span class="time-separator">:</span>
+                        <div class="time-input-field">
+                            <input type="number" id="minutes-input" min="0" max="59" value="0" placeholder="00">
+                            <label>分</label>
+                        </div>
+                        <span class="time-separator">:</span>
+                        <div class="time-input-field">
+                            <input type="number" id="seconds-input" min="0" max="59" value="0" placeholder="00">
+                            <label>秒</label>
+                        </div>
+                    </div>
+                    <button id="submit-btn" class="submit-btn">提交答案</button>
+                </div>
+            </div>
+
+            <!-- 结果显示区域 -->
+            <div class="result-section">
+                <div id="result-display" class="result-display" style="display: none;">
+                    <div id="result-message" class="result-message"></div>
+                    <div id="correct-answer" class="correct-answer"></div>
+                    <button id="next-btn" class="next-btn" style="display: none;">继续练习</button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="js/config-manager.js"></script>
+    <script src="js/time-generator.js"></script>
+    <script src="js/clock-renderer.js"></script>
+    <script src="js/answer-validator.js"></script>
+    <script src="js/app-controller.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

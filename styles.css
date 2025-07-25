@@ -1,0 +1,392 @@
+/* 基础样式重置 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', 'Microsoft YaHei', sans-serif;
+    background-color: #f5f7fa;
+    color: #333;
+    line-height: 1.6;
+}
+
+/* 应用容器 */
+.app-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    grid-template-rows: auto 1fr;
+    grid-template-areas: 
+        "header header header"
+        "config clock answer";
+    gap: 20px;
+    min-height: 100vh;
+}
+
+/* 标题区域 */
+.header {
+    grid-area: header;
+    text-align: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.header h1 {
+    font-size: 2.5rem;
+    font-weight: 300;
+}
+
+/* 配置面板 */
+.config-panel {
+    grid-area: config;
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    height: fit-content;
+    align-self: start;
+}
+
+.config-panel h2 {
+    color: #667eea;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+}
+
+.time-units {
+    margin-bottom: 20px;
+}
+
+.time-units label,
+.minute-intervals label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 5px;
+    transition: background-color 0.2s;
+}
+
+.time-units label:hover,
+.minute-intervals label:hover {
+    background-color: #f0f2ff;
+}
+
+.time-units input,
+.minute-intervals input {
+    margin-right: 10px;
+    transform: scale(1.2);
+}
+
+.minute-intervals {
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #f8f9ff;
+    border-radius: 8px;
+    border-left: 4px solid #667eea;
+}
+
+.minute-intervals h3 {
+    color: #667eea;
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+}
+
+/* 按钮样式 */
+.refresh-btn,
+.submit-btn,
+.next-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 25px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.refresh-btn:hover,
+.submit-btn:hover,
+.next-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.refresh-btn {
+    width: 100%;
+    font-size: 1.2rem;
+    padding: 15px;
+}
+
+/* 时钟显示区域 */
+.clock-section {
+    grid-area: clock;
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.clock-section h2 {
+    color: #667eea;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+}
+
+.clock-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 350px;
+    height: 100%;
+}
+
+#clock-canvas {
+    border: 3px solid #667eea;
+    border-radius: 50%;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.clock-fallback {
+    width: 300px;
+    height: 300px;
+    border: 3px solid #667eea;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.digital-time {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #667eea;
+    font-family: 'Courier New', monospace;
+}
+
+/* 答案区域（包含输入和结果） */
+.answer-section {
+    grid-area: answer;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-self: start;
+}
+
+/* 输入区域 */
+.input-section {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.input-container {
+    text-align: center;
+}
+
+.input-container label {
+    display: block;
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+    color: #667eea;
+    font-weight: 500;
+}
+
+/* 时间输入组 */
+.time-input-group {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 15px 0;
+    gap: 8px;
+}
+
+.time-input-field {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.time-input-field input {
+    width: 60px;
+    padding: 12px 8px;
+    font-size: 1.5rem;
+    text-align: center;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-family: 'Courier New', monospace;
+    transition: border-color 0.3s;
+    background-color: white;
+}
+
+.time-input-field input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.time-input-field input.error {
+    border-color: #e74c3c;
+    background-color: #fdf2f2;
+}
+
+.time-input-field input.success {
+    border-color: #27ae60;
+    background-color: #f2fdf5;
+}
+
+.time-input-field label {
+    margin-top: 5px;
+    font-size: 0.9rem;
+    color: #667eea;
+    font-weight: 500;
+}
+
+.time-separator {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #667eea;
+    margin: 0 5px;
+    align-self: flex-start;
+    margin-top: 12px;
+}
+
+/* 移除数字输入框的默认箭头 */
+.time-input-field input::-webkit-outer-spin-button,
+.time-input-field input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.time-input-field input[type=number] {
+    -moz-appearance: textfield;
+}
+
+/* 结果显示区域 */
+.result-section {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.result-display {
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.result-message {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.result-display.correct {
+    background-color: #d4edda;
+    border: 2px solid #27ae60;
+}
+
+.result-display.correct .result-message {
+    color: #27ae60;
+}
+
+.result-display.incorrect {
+    background-color: #f8d7da;
+    border: 2px solid #e74c3c;
+}
+
+.result-display.incorrect .result-message {
+    color: #e74c3c;
+}
+
+.correct-answer {
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+    color: #666;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .app-container {
+        grid-template-columns: 1fr;
+        grid-template-areas: 
+            "header"
+            "config"
+            "clock"
+            "answer";
+        padding: 10px;
+    }
+    
+    .header h1 {
+        font-size: 2rem;
+    }
+    
+    #clock-canvas,
+    .clock-fallback {
+        width: 250px;
+        height: 250px;
+    }
+    
+    .digital-time {
+        font-size: 2rem;
+    }
+    
+    .time-input-group {
+        gap: 8px;
+    }
+    
+    .time-input-field input {
+        width: 50px;
+        font-size: 1.3rem;
+    }
+    
+    .time-separator {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .header h1 {
+        font-size: 1.5rem;
+    }
+    
+    #clock-canvas,
+    .clock-fallback {
+        width: 200px;
+        height: 200px;
+    }
+    
+    .digital-time {
+        font-size: 1.5rem;
+    }
+    
+    .time-input-field input {
+        width: 45px;
+        font-size: 1.2rem;
+    }
+    
+    .time-separator {
+        font-size: 1.3rem;
+    }
+    
+    .submit-btn {
+        width: 100%;
+        margin-top: 10px;
+    }
+}
