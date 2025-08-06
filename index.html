@@ -1,64 +1,113 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>时钟学习应用</title>
+    <title>时钟练习应用</title>
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🕐</text></svg>">
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
     <div class="app-container">
         <!-- 标题区域 -->
         <header class="header">
-            <h1>时钟学习练习</h1>
+            <h1>时钟练习</h1>
         </header>
 
         <!-- 配置面板 -->
         <section class="config-panel">
             <h2>配置选项</h2>
-            <div class="time-units">
-                <label>
-                    <input type="checkbox" id="enable-hours" checked>
-                    时
-                </label>
-                <label>
-                    <input type="checkbox" id="enable-minutes">
-                    分
-                </label>
-                <label>
-                    <input type="checkbox" id="enable-seconds">
-                    秒
-                </label>
+            <!-- 星级难度选择 -->
+            <div class="difficulty-selection">
+                <div class="difficulty-header">
+                    <h3>选择难度</h3>
+                    <span class="help-icon global-help" data-level="all">?</span>
+                </div>
+                <div class="star-difficulty">
+                    <div class="star-container" data-level="1">
+                        <div class="star-row">
+                            <span class="stars">★☆☆☆☆</span>
+                        </div>
+                        <div class="difficulty-text">1星 - 整点时间</div>
+                    </div>
+                    <div class="star-container" data-level="2">
+                        <div class="star-row">
+                            <span class="stars">★★☆☆☆</span>
+                        </div>
+                        <div class="difficulty-text">2星 - 30分钟间隔</div>
+                    </div>
+                    <div class="star-container" data-level="3">
+                        <div class="star-row">
+                            <span class="stars">★★★☆☆</span>
+                        </div>
+                        <div class="difficulty-text">3星 - 5分钟间隔</div>
+                    </div>
+                    <div class="star-container" data-level="4">
+                        <div class="star-row">
+                            <span class="stars">★★★★☆</span>
+                        </div>
+                        <div class="difficulty-text">4星 - 1分钟间隔</div>
+                    </div>
+                    <div class="star-container" data-level="5">
+                        <div class="star-row">
+                            <span class="stars">★★★★★</span>
+                        </div>
+                        <div class="difficulty-text">5星 - 1秒钟间隔</div>
+                    </div>
+                </div>
+
+                <!-- 难度说明提示框 -->
+                <div id="difficulty-tooltip" class="difficulty-tooltip" style="display: none;">
+                    <div class="tooltip-content">
+                        <div class="tooltip-title"></div>
+                        <div class="tooltip-description"></div>
+                    </div>
+                </div>
             </div>
-            
-            <div class="minute-intervals" id="minute-intervals" style="display: none;">
-                <h3>分钟间隔:</h3>
-                <label>
-                    <input type="radio" name="minute-interval" value="30">
-                    30分钟
-                </label>
-                <label>
-                    <input type="radio" name="minute-interval" value="5">
-                    5分钟
-                </label>
-                <label>
-                    <input type="radio" name="minute-interval" value="1" checked>
-                    1分钟
-                </label>
-            </div>
-            
-            <button id="refresh-btn" class="refresh-btn">刷新题目</button>
+
+            <!-- refresh-btn 已移除 -->
         </section>
 
         <!-- 时钟显示区域 -->
         <section class="clock-section">
             <h2>请看时钟，输入时间</h2>
+
+            <!-- 时钟控制区域 -->
+            <div class="clock-controls">
+                <div class="clock-controls-row">
+                    <div class="left-controls">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="current-time-toggle">
+                            <span class="toggle-slider"></span>
+                            <span class="toggle-label">显示当前时间</span>
+                        </label>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="auto-tick-toggle">
+                            <span class="toggle-slider"></span>
+                            <span class="toggle-label">自动走动</span>
+                        </label>
+                    </div>
+                    <div class="right-controls">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="guide-lines-toggle">
+                            <span class="toggle-slider"></span>
+                            <span class="toggle-label">参考线</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
             <div class="clock-container">
                 <canvas id="clock-canvas" width="300" height="300"></canvas>
                 <div id="clock-fallback" class="clock-fallback" style="display: none;">
                     <div class="digital-time" id="digital-time">12:00:00</div>
+                    <div class="fallback-message">您的浏览器不支持Canvas，显示数字时钟</div>
                 </div>
             </div>
+
         </section>
 
         <!-- 答案区域 -->
@@ -66,7 +115,7 @@
             <!-- 输入区域 -->
             <div class="input-section">
                 <div class="input-container">
-                    <label>请输入时间:</label>
+                    <label>请输入完整时间 (时:分:秒):</label>
                     <div class="time-input-group">
                         <div class="time-input-field">
                             <input type="number" id="hours-input" min="0" max="12" value="0" placeholder="00">
@@ -77,32 +126,154 @@
                             <input type="number" id="minutes-input" min="0" max="59" value="0" placeholder="00">
                             <label>分</label>
                         </div>
-                        <span class="time-separator">:</span>
-                        <div class="time-input-field">
+                        <span class="time-separator" id="seconds-separator">:</span>
+                        <div class="time-input-field" id="seconds-field">
                             <input type="number" id="seconds-input" min="0" max="59" value="0" placeholder="00">
                             <label>秒</label>
                         </div>
                     </div>
+                </div>
+                <div class="timer-display">
+                    <span class="timer-label">答题时间:</span>
+                    <span id="timer-display" class="timer-value">00:00</span>
+                </div>
+                <div class="submit-container">
                     <button id="submit-btn" class="submit-btn">提交答案</button>
                 </div>
             </div>
 
             <!-- 结果显示区域 -->
             <div class="result-section">
+                <div class="result-placeholder">
+                    <div class="placeholder-content">
+                        <p>📝 提交答案后，这里将显示详细的答题结果</p>
+                        <p class="placeholder-hint">包括正确性判断、用时统计和学习建议</p>
+                    </div>
+                </div>
                 <div id="result-display" class="result-display" style="display: none;">
-                    <div id="result-message" class="result-message"></div>
+                    <div class="result-header">
+                        <div id="result-message" class="result-message"></div>
+                        <div id="result-time-spent" class="result-time-spent"></div>
+                    </div>
                     <div id="correct-answer" class="correct-answer"></div>
-                    <button id="next-btn" class="next-btn" style="display: none;">继续练习</button>
+                    <div id="result-explanation" class="result-explanation"></div>
+                   
                 </div>
             </div>
         </section>
+
+        <!-- 答题记录区域 -->
+        <section class="records-section">
+            <h2>答题记录</h2>
+
+            <!-- 记录筛选控制 -->
+            <div class="records-filters">
+                <div class="filter-row">
+                    <div class="filter-group compact">
+                        <label for="correctness-filter">正确性:</label>
+                        <select id="correctness-filter" class="filter-select">
+                            <option value="">全部</option>
+                            <option value="true">正确</option>
+                            <option value="false">错误</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group compact">
+                        <label for="difficulty-filter">难度:</label>
+                        <select id="difficulty-filter" class="filter-select">
+                            <option value="">全部</option>
+                            <option value="1">1星</option>
+                            <option value="2">2星</option>
+                            <option value="3">3星</option>
+                            <option value="4">4星</option>
+                            <option value="5">5星</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="date-from-filter">开始日期:</label>
+                        <input type="date" id="date-from-filter" class="filter-input">
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="date-to-filter">结束日期:</label>
+                        <input type="date" id="date-to-filter" class="filter-input">
+                    </div>
+
+                    <div class="filter-actions">
+                        <button id="clear-filters-btn" class="filter-btn secondary">清除筛选</button>
+                        <button id="clear-records-btn" class="filter-btn danger" onclick="
+                            try {
+                                if (window.appController && window.appController.recordUI && typeof window.appController.recordUI.clearAllRecords === 'function') {
+                                    window.appController.recordUI.clearAllRecords();
+                                } else {
+                                    alert('功能暂未加载完成，请稍后再试');
+                                }
+                            } catch(e) {
+                                console.error('清除记录失败:', e);
+                                alert('操作失败，请刷新页面后重试');
+                            }
+                        ">清除记录</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 记录统计信息 -->
+            <div class="records-stats">
+                <div class="stat-item">
+                    <span class="stat-label">总记录数:</span>
+                    <span id="total-records-count" class="stat-value">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">正确率:</span>
+                    <span id="correct-rate" class="stat-value">0%</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">平均耗时:</span>
+                    <span id="average-time" class="stat-value">0秒</span>
+                </div>
+            </div>
+
+            <!-- 记录列表 -->
+            <div class="records-list">
+                <div id="records-container" class="records-container">
+                    <div class="no-records-message" style="display: none;">
+                        <p>暂无答题记录</p>
+                        <p class="no-records-hint">开始练习后，您的答题记录将显示在这里</p>
+                    </div>
+                </div>
+
+                <!-- 分页导航 -->
+                <div class="pagination">
+                    <button id="prev-page-btn" class="pagination-btn" disabled>上一页</button>
+                    <div class="pagination-info">
+                        第<span id="current-page">1</span>页 / 共<span id="total-pages">1</span>页 (每页<span
+                            id="page-size">10</span>条，共<span id="total-records-display">0</span>条)
+                    </div>
+                    <button id="next-page-btn" class="pagination-btn" disabled>下一页</button>
+                </div>
+            </div>
+
+
+        </section>
+
+
     </div>
 
+    <script src="js/performance-optimizer.js"></script>
+    <script src="js/accessibility-manager.js"></script>
+    <script src="js/difficulty-manager.js"></script>
+    <script src="js/difficulty-ui.js"></script>
     <script src="js/config-manager.js"></script>
     <script src="js/time-generator.js"></script>
     <script src="js/clock-renderer.js"></script>
+    <script src="js/timer-manager.js"></script>
     <script src="js/answer-validator.js"></script>
+    <script src="js/record-manager.js"></script>
+    <script src="js/record-ui.js"></script>
+
     <script src="js/app-controller.js"></script>
     <script src="js/main.js"></script>
 </body>
+
 </html>

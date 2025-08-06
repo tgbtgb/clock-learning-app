@@ -1,19 +1,37 @@
 /**
  * 时间生成器类
- * 根据配置生成随机时间
+ * 根据星级难度生成相应复杂度的时间
  */
 class TimeGenerator {
-    constructor(config) {
-        this.config = config;
+    constructor(difficultyManager) {
+        this.difficultyManager = difficultyManager;
         this.lastGeneratedTime = null; // 记录上次生成的时间
     }
 
     /**
-     * 更新配置
-     * @param {Object} config - 新的配置对象
+     * 更新难度管理器
+     * @param {DifficultyManager} difficultyManager - 难度管理器实例
      */
-    updateConfig(config) {
-        this.config = config;
+    updateDifficultyManager(difficultyManager) {
+        this.difficultyManager = difficultyManager;
+    }
+
+    /**
+     * 获取当前时间配置
+     * @returns {Object} 当前难度的时间配置
+     */
+    getTimeConfig() {
+        if (!this.difficultyManager) {
+            console.error('难度管理器未初始化');
+            return {
+                includeHours: true,
+                includeMinutes: true,
+                includeSeconds: true,
+                minuteInterval: 60,
+                secondsFixed: 0
+            };
+        }
+        return this.difficultyManager.getTimeConfig();
     }
 
     /**
@@ -64,38 +82,52 @@ class TimeGenerator {
     }
 
     /**
-     * 根据配置生成分钟
+     * 根据难度配置生成分钟
      * @returns {number} 分钟数
      */
     generateMinute() {
-        if (!this.config.enableMinutes) {
+        const config = this.getTimeConfig();
+        
+        if (!config.includeMinutes) {
             return 0;
         }
 
-        const interval = this.config.minuteInterval;
+        const interval = config.minuteInterval;
         
         switch (interval) {
+            case 60:
+                // 1星：整点时间，分钟固定为0
+                return 0;
             case 30:
-                // 只能是0或30分钟
+                // 2星：只能是0或30分钟
                 return Math.random() < 0.5 ? 0 : 30;
             case 5:
-                // 5分钟的倍数: 0, 5, 10, 15, ..., 55
+                // 3星：5分钟的倍数: 0, 5, 10, 15, ..., 55
                 return Math.floor(Math.random() * 12) * 5;
             case 1:
             default:
-                // 任意分钟: 0-59
+                // 4星和5星：任意分钟: 0-59
                 return Math.floor(Math.random() * 60);
         }
     }
 
     /**
-     * 生成随机秒钟
+     * 根据难度配置生成秒钟
      * @returns {number} 秒数
      */
     generateSecond() {
-        if (!this.config.enableSeconds) {
+        const config = this.getTimeConfig();
+        
+        if (!config.includeSeconds) {
             return 0;
         }
+        
+        // 检查是否有固定的秒数设置（1-4星固定为0，5星随机）
+        if (config.secondsFixed !== undefined && config.secondsFixed !== null) {
+            return config.secondsFixed;
+        }
+        
+        // 5星难度：随机生成0-59秒
         return Math.floor(Math.random() * 60);
     }
 
